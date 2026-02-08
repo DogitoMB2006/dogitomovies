@@ -52,22 +52,27 @@ const Search = () => {
     }, [query]);
 
     return (
-        <div className="min-h-screen bg-background text-white">
+        <div className="page-shell">
             <Navbar />
-            <div className="container mx-auto px-4 md:px-8 pt-28 md:pt-32 pb-10">
-                <h2 className="text-2xl font-bold mb-6">
-                    Results for: <span className="text-gray-400">{query || '...'}</span>
-                </h2>
+            <div className="content-wrap pt-28 pb-12 md:pt-32">
+                <div className="frosted mb-6 rounded-2xl p-5 sm:p-6">
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Search</p>
+                    <h2 className="mt-2 text-2xl font-bold sm:text-3xl">
+                        Results for <span className="text-primary">{query || '...'}</span>
+                    </h2>
+                </div>
 
                 {!hasTmdbKey() && (
-                    <p className="mb-4 px-4 py-2 rounded bg-amber-500/20 text-amber-200 text-sm">
-                        Add <code className="bg-black/30 px-1 rounded">VITE_TMDB_API_KEY</code> in a <code className="bg-black/30 px-1 rounded">.env</code> file to search real titles. Get a free key at{' '}
+                    <p className="mb-4 rounded-xl border border-amber-300/25 bg-amber-500/12 px-4 py-3 text-sm text-amber-100">
+                        Add <code className="rounded bg-black/30 px-1">VITE_TMDB_API_KEY</code> in a <code className="rounded bg-black/30 px-1">.env</code> file to search real titles. Get a free key at{' '}
                         <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener noreferrer" className="underline">themoviedb.org</a>.
                     </p>
                 )}
 
                 {usedMock && results.length > 0 && (
-                    <p className="mb-4 text-gray-500 text-sm">Showing sample results (API key not set or request failed).</p>
+                    <p className="mb-4 rounded-xl border border-border/70 bg-secondary/65 px-4 py-3 text-sm text-muted-foreground">
+                        Showing sample results (API key not set or request failed).
+                    </p>
                 )}
 
                 {loading ? (
@@ -75,7 +80,7 @@ const Search = () => {
                         <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                     </div>
                 ) : results.length > 0 ? (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                         {results.map((movie) => (
                             <div key={`${movie.media_type}-${movie.id}`} className="w-full">
                                 <MovieCard movie={movie} />
@@ -83,7 +88,9 @@ const Search = () => {
                         ))}
                     </div>
                 ) : (
-                    <p className="text-center text-gray-500 mt-20">No results found.</p>
+                    <div className="frosted mt-20 rounded-2xl p-8 text-center text-muted-foreground">
+                        No results found.
+                    </div>
                 )}
             </div>
         </div>

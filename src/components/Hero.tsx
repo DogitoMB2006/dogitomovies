@@ -9,53 +9,63 @@ interface HeroProps {
 }
 
 const Hero = ({ movie }: HeroProps) => {
-    if (!movie) return <div className="h-[70vh] sm:h-[80vh] w-full bg-background animate-pulse" />;
+    if (!movie) return <div className="h-[72vh] w-full animate-pulse bg-secondary/60" />;
+
+    const mediaType = movie.media_type === 'tv' ? 'tv' : 'movie';
 
     return (
-        <div className="relative h-[70vh] sm:h-[80vh] md:h-[85vh] w-full overflow-hidden">
-            {/* Background Image */}
+        <div className="relative h-[72vh] min-h-[520px] w-full overflow-hidden sm:h-[78vh] md:h-[84vh]">
             <div className="absolute inset-0">
                 <img
                     src={getImageUrl(movie.backdrop_path, 'original')}
                     alt={movie.title || movie.name}
                     className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-background via-background/65 to-background/40" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/15 to-black/25" />
             </div>
 
-            {/* Content */}
-            <div className="relative h-full container mx-auto px-4 md:px-8 flex flex-col justify-center">
+            <div className="content-wrap relative z-10 flex h-full flex-col justify-center pt-24 sm:pt-28">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 26 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="max-w-2xl"
+                    transition={{ duration: 0.7 }}
+                    className="max-w-3xl"
                 >
-                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-4 drop-shadow-lg">
+                    <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/35 bg-secondary/75 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+                        Cinematic Pick
+                    </div>
+
+                    <h1 className="mb-4 text-4xl font-extrabold leading-tight text-foreground drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl">
                         {movie.title || movie.name}
                     </h1>
 
-                    <div className="flex items-center gap-4 text-white/80 mb-6 text-sm md:text-base">
-                        <span className="font-semibold text-green-500">{Math.round(movie.vote_average * 10)}% Match</span>
+                    <div className="mb-6 flex flex-wrap items-center gap-2 text-xs text-secondary-foreground sm:gap-4 sm:text-sm md:text-base">
+                        <span className="rounded-md border border-primary/35 bg-primary/15 px-2.5 py-1 font-semibold text-primary">
+                            {Math.round(movie.vote_average * 10)}% Match
+                        </span>
                         <span>{movie.release_date?.split('-')[0] || movie.first_air_date?.split('-')[0]}</span>
-                        <span className="border border-white/40 px-2 py-0.5 rounded text-xs">HD</span>
+                        <span className="rounded-md border border-border/80 bg-secondary/70 px-2.5 py-1">4K UHD</span>
+                        <span className="rounded-md border border-border/80 bg-secondary/70 px-2.5 py-1 uppercase">{mediaType}</span>
                     </div>
 
-                    <p className="text-base md:text-lg text-white/90 mb-8 line-clamp-3 drop-shadow-md">
+                    <p className="mb-8 max-w-2xl text-base text-secondary-foreground drop-shadow-md sm:text-lg">
                         {movie.overview}
                     </p>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                         <Link
-                            to={`/watch/${movie.media_type}/${movie.id}`}
-                            className="flex items-center gap-2 bg-white text-black px-6 md:px-8 py-3 rounded font-bold hover:bg-white/90 transition-colors min-h-[44px]"
+                            to={`/watch/${mediaType}/${movie.id}`}
+                            className="inline-flex min-h-[46px] items-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-primary-foreground transition hover:bg-sky-300"
                         >
-                            <Play className="w-5 h-5 fill-black" />
+                            <Play className="h-5 w-5 fill-primary-foreground" />
                             Play
                         </Link>
-                        <button type="button" className="flex items-center gap-2 bg-gray-500/70 text-white px-6 md:px-8 py-3 rounded font-bold hover:bg-gray-500/50 transition-colors backdrop-blur-sm min-h-[44px]">
-                            <Info className="w-5 h-5" />
+                        <button
+                            type="button"
+                            className="inline-flex min-h-[46px] items-center gap-2 rounded-xl border border-border/80 bg-card/80 px-6 py-3 font-bold text-foreground transition hover:border-primary/60 hover:bg-secondary/80"
+                        >
+                            <Info className="h-5 w-5" />
                             More Info
                         </button>
                     </div>

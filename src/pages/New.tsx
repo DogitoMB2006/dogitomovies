@@ -30,11 +30,11 @@ const New = () => {
     }, []);
 
     return (
-        <div className="bg-background min-h-screen pb-20 overflow-x-hidden">
+        <div className="page-shell">
             <Navbar />
             <Hero movie={featured} />
 
-            <div className="relative z-10 -mt-32 md:-mt-48 pl-0">
+            <div className="content-wrap section-stack">
                 <MovieRow title="Popular This Week" movies={trending} />
                 <MovieRow title="New Releases" movies={[...trending].sort(() => 0.5 - Math.random())} />
                 <MovieRow title="Trending Now" movies={trending} />

@@ -32,14 +32,14 @@ const VideoPlayer = ({ tmdbId, type, season, episode }: VideoPlayerProps) => {
     }, []);
 
     const src = getVidkingUrl(tmdbId, type, season || 1, episode || 1, {
-        color: 'e50914', 
+        color: '38bdf8',
         autoPlay: true,
         nextEpisode: true,
         episodeSelector: true,
     });
 
     return (
-        <div className="w-full h-full bg-black relative">
+        <div className="relative h-full w-full overflow-hidden rounded-2xl border border-border/80 bg-black">
             <iframe
                 ref={iframeRef}
                 src={src}

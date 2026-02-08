@@ -8,17 +8,19 @@ const Watch = () => {
     if (!id || !type) return null;
 
     return (
-        <div className="w-screen h-screen bg-black flex flex-col">
-            <div className="absolute top-4 left-4 z-50">
+        <div className="h-screen w-screen bg-background">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.2),transparent_35%)]" />
+            <div className="absolute left-4 top-4 z-50">
                 <Link
                     to="/"
-                    className="flex items-center gap-2 text-white hover:text-primary transition-colors bg-black/50 p-2 rounded-full backdrop-blur-sm"
+                    className="frosted pointer-events-auto inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-foreground transition hover:border-primary/70 hover:text-primary"
                 >
-                    <ArrowLeft className="w-6 h-6" />
+                    <ArrowLeft className="h-4 w-4" />
+                    Back
                 </Link>
             </div>
 
-            <div className="flex-1 w-full h-full">
+            <div className="h-full w-full p-3 sm:p-4">
                 <VideoPlayer
                     tmdbId={parseInt(id)}
                     type={type as 'movie' | 'tv'}

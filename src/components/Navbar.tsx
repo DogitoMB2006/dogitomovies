@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, Bell, Menu, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -47,85 +47,114 @@ const Navbar = () => {
     return (
         <nav
             className={cn(
-                'fixed top-0 w-full z-50 transition-colors duration-300',
-                isScrolled ? 'bg-background/95 backdrop-blur-sm shadow-md' : 'bg-transparent'
+                'fixed inset-x-0 top-0 z-50 border-b-0 transition-all duration-300',
+                isScrolled
+                    ? 'bg-background/88 backdrop-blur-xl'
+                    : 'bg-gradient-to-b from-black/55 via-black/20 to-transparent'
             )}
         >
-            <div className="container mx-auto px-4 md:px-8 py-3 md:py-4 flex items-center justify-between">
-                <div className="flex items-center gap-4 md:gap-8">
-                    <Link to="/" className="text-xl sm:text-2xl font-bold text-primary font-heading">
-                        DogitoMovies
-                    </Link>
-                    <div className="hidden md:flex gap-6">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.name}
-                                to={link.path}
-                                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-                            >
-                                {link.name}
+            <div className="content-wrap w-full py-3 md:py-4">
+                <div
+                    className={cn(
+                        'soft-glow flex w-full min-w-0 flex-shrink-0 flex-nowrap items-center justify-between gap-3 rounded-2xl px-3 py-2 sm:px-4 md:px-5 transition-colors',
+                        isScrolled ? 'frosted border border-border/80 bg-card/75 backdrop-blur-xl' : 'border border-transparent bg-black/25 backdrop-blur-md'
+                    )}
+                >
+                    <div className="flex min-w-0 flex-shrink items-center gap-4 md:gap-8">
+                            <Link to="/" className="text-lg font-extrabold tracking-tight text-primary sm:text-xl">
+                                DogitoMovies
                             </Link>
-                        ))}
-                    </div>
-                </div>
+                            <div className="hidden items-center gap-5 md:flex">
+                                {navLinks.map((link) => (
+                                    <NavLink
+                                        key={link.name}
+                                        to={link.path}
+                                        className={({ isActive }) =>
+                                            cn(
+                                                'text-sm font-semibold transition-colors',
+                                                isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+                                            )
+                                        }
+                                    >
+                                        {link.name}
+                                    </NavLink>
+                                ))}
+                            </div>
+                        </div>
 
-                <div className="flex items-center gap-4">
-                    <form onSubmit={handleSearch} className="hidden md:flex items-center bg-secondary/50 rounded-full px-3 py-1.5 border border-transparent focus-within:border-gray-500 transition-colors">
-                        <Search className="w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Titles, people, genres"
-                            className="bg-transparent border-none focus:outline-none text-sm ml-2 w-48 text-white placeholder-gray-400"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </form>
+                        <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
+                            <form
+                                onSubmit={handleSearch}
+                                className="hidden items-center rounded-xl border border-border/80 bg-secondary/85 px-3 py-2 md:flex"
+                            >
+                                <Search className="h-4 w-4 text-muted-foreground" />
+                                <input
+                                    type="text"
+                                    placeholder="Search titles"
+                                    className="ml-2 w-40 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground lg:w-52"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </form>
 
-                    <button className="text-white hover:text-gray-300 transition-colors">
-                        <Bell className="w-5 h-5" />
-                    </button>
+                            <button
+                                type="button"
+                                className="rounded-lg border border-border/60 bg-secondary/80 p-2 text-muted-foreground transition-colors hover:text-foreground"
+                                aria-label="Notifications"
+                            >
+                                <Bell className="h-4 w-4" />
+                            </button>
 
-                    <div className="flex items-center gap-2 cursor-pointer">
-                        <div className="w-8 h-8 rounded bg-primary flex items-center justify-center text-white font-bold">
-                            DM
+                            <div className="grid h-8 w-8 place-content-center rounded-lg bg-gradient-to-br from-sky-400 to-blue-700 text-xs font-bold text-white">
+                                DM
+                            </div>
+
+                            <button
+                                className="rounded-lg border border-border/60 bg-secondary/80 p-2 text-foreground md:hidden"
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                aria-label="Toggle navigation"
+                            >
+                                {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+                            </button>
                         </div>
                     </div>
-
-                    <button
-                        className="md:hidden text-white"
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    >
-                        {isMobileMenuOpen ? <X /> : <Menu />}
-                    </button>
                 </div>
-            </div>
 
-          
             <AnimatePresence>
                 {isMobileMenuOpen && (
                     <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden bg-background border-t border-gray-800"
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        className="content-wrap pb-3 md:hidden"
                     >
-                        <div className="flex flex-col p-4 gap-4">
-                            {navLinks.map((link) => (
-                                <Link
-                                    key={link.name}
-                                    to={link.path}
-                                    className="text-gray-300 hover:text-white text-lg font-medium"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    {link.name}
-                                </Link>
-                            ))}
-                            <form onSubmit={handleSearch} className="flex items-center bg-secondary rounded-full px-4 py-2 mt-2">
-                                <Search className="w-5 h-5 text-gray-400" />
+                        <div className="frosted rounded-2xl p-4">
+                            <div className="mb-4 flex flex-col gap-3">
+                                {navLinks.map((link) => (
+                                    <NavLink
+                                        key={link.name}
+                                        to={link.path}
+                                        className={({ isActive }) =>
+                                            cn(
+                                                'rounded-lg px-3 py-2 text-sm font-semibold transition-colors',
+                                                isActive
+                                                    ? 'bg-primary/20 text-foreground'
+                                                    : 'text-muted-foreground hover:bg-secondary/70 hover:text-foreground'
+                                            )
+                                        }
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        {link.name}
+                                    </NavLink>
+                                ))}
+                            </div>
+
+                            <form onSubmit={handleSearch} className="flex items-center rounded-xl border border-border/80 bg-secondary/85 px-3 py-2">
+                                <Search className="h-4 w-4 text-muted-foreground" />
                                 <input
                                     type="text"
-                                    placeholder="Search..."
-                                    className="bg-transparent border-none focus:outline-none text-base ml-2 w-full text-white"
+                                    placeholder="Search titles"
+                                    className="ml-2 w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />

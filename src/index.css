@@ -1,30 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-background: #141414;
-  --color-foreground: #ffffff;
-  --color-primary: #e50914;
-  --color-primary-foreground: #ffffff;
-  --color-secondary: #2f2f2f;
-  --color-secondary-foreground: #ffffff;
-  --color-muted: #646464;
-  --color-muted-foreground: #a3a3a3;
-  --color-accent: #e50914;
-  --color-accent-foreground: #ffffff;
-  --color-card: #1f1f1f;
-  --color-card-foreground: #ffffff;
-  --color-border: #404040;
-  --color-input: #404040;
+  --color-background: #050913;
+  --color-foreground: #edf4ff;
+  --color-primary: #38bdf8;
+  --color-primary-foreground: #02121f;
+  --color-secondary: #0f1726;
+  --color-secondary-foreground: #dce8ff;
+  --color-muted: #162236;
+  --color-muted-foreground: #95a9c9;
+  --color-accent: #60a5fa;
+  --color-accent-foreground: #0b1320;
+  --color-card: #0b1422;
+  --color-card-foreground: #edf4ff;
+  --color-border: #223149;
+  --color-input: #1a273c;
+  --font-sans: 'Manrope', 'Segoe UI', sans-serif;
+  --font-heading: 'Sora', 'Manrope', sans-serif;
 }
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: dark;
   color: var(--color-foreground);
-  background-color: var(--color-background);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(56, 189, 248, 0.15), transparent 30%),
+    radial-gradient(circle at 88% 2%, rgba(96, 165, 250, 0.16), transparent 34%),
+    radial-gradient(circle at 50% 120%, rgba(30, 64, 175, 0.14), transparent 40%),
+    var(--color-background);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -36,13 +43,67 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: transparent;
+  color: var(--color-foreground);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 18, 32, 0.65);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.75), rgba(37, 99, 235, 0.75));
+  border-radius: 9999px;
 }
 
 @layer utilities {
+  .page-shell {
+    @apply min-h-screen text-foreground overflow-x-hidden;
+  }
+
+  .content-wrap {
+    @apply mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10;
+  }
+
+  .section-stack {
+    @apply relative z-0 mt-0 space-y-8 pb-16 sm:space-y-10;
+  }
+
+  .frosted {
+    @apply border border-border/80 bg-card/75 backdrop-blur-xl;
+  }
+
+  .soft-glow {
+    box-shadow: 0 18px 45px -24px rgba(56, 189, 248, 0.55);
+  }
+
   .text-balance {
     text-wrap: balance;
   }
-  /* Show hover preview only on devices that support hover (desktop) */
+
   @media (hover: none) {
     .hover-only-preview {
       display: none !important;
