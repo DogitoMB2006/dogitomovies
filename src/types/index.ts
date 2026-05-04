@@ -17,3 +17,16 @@ export interface SearchResults {
     total_pages: number;
     total_results: number;
 }
+
+/** TMDB `/tv/{id}/season/{n}` — fields we use in the episode picker */
+export interface TvSeasonEpisode {
+    id: number;
+    episode_number: number;
+    name: string;
+    still_path: string | null;
+}
+
+export interface TvSeasonDetails {
+    season_number: number;
+    episodes: TvSeasonEpisode[];
+}
