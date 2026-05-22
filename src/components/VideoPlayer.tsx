@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { getVidkingUrl } from '../services/vidking'
 import { ListVideo, Maximize2, Minimize2 } from 'lucide-react'
+import { cn } from '../lib/utils'
 
 interface VideoPlayerProps {
     tmdbId: number
@@ -9,12 +10,32 @@ interface VideoPlayerProps {
     episode?: number
     poster?: string
     onOpenEpisodes?: () => void
+    chromeVisible?: boolean
+    onChromeBump?: () => void
 }
 
-const VideoPlayer = ({ tmdbId, type, season, episode, onOpenEpisodes }: VideoPlayerProps) => {
+const chromeTransition = (visible: boolean) =>
+    cn(
+        'transition-all duration-300 ease-out',
+        visible ? 'pointer-events-auto translate-y-0 opacity-100' : 'pointer-events-none translate-y-1 opacity-0'
+    )
+
+const VideoPlayer = ({
+    tmdbId,
+    type,
+    season,
+    episode,
+    onOpenEpisodes,
+    chromeVisible = true,
+    onChromeBump,
+}: VideoPlayerProps) => {
     const iframeRef = useRef<HTMLIFrameElement>(null)
     const shellRef = useRef<HTMLDivElement>(null)
     const [isFullscreen, setIsFullscreen] = useState(false)
+
+    const bumpChrome = useCallback(() => {
+        onChromeBump?.()
+    }, [onChromeBump])
 
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
@@ -42,6 +63,7 @@ const VideoPlayer = ({ tmdbId, type, season, episode, onOpenEpisodes }: VideoPla
     }, [])
 
     const handleToggleFullscreen = useCallback(async () => {
+        bumpChrome()
         const shell = shellRef.current
         if (!shell) return
         try {
@@ -53,7 +75,12 @@ const VideoPlayer = ({ tmdbId, type, season, episode, onOpenEpisodes }: VideoPla
         } catch (err) {
             console.warn('Fullscreen failed:', err)
         }
-    }, [])
+    }, [bumpChrome])
+
+    const handleOpenEpisodes = useCallback(() => {
+        bumpChrome()
+        onOpenEpisodes?.()
+    }, [bumpChrome, onOpenEpisodes])
 
     const src = getVidkingUrl(tmdbId, type, season || 1, episode || 1, {
         color: '38bdf8',
@@ -66,6 +93,7 @@ const VideoPlayer = ({ tmdbId, type, season, episode, onOpenEpisodes }: VideoPla
         <div
             ref={shellRef}
             className="relative flex min-h-0 w-full flex-1 overflow-hidden rounded-none border-0 bg-black sm:rounded-2xl sm:border sm:border-border/80"
+            onPointerDown={bumpChrome}
         >
             <iframe
                 ref={iframeRef}
@@ -79,12 +107,43 @@ const VideoPlayer = ({ tmdbId, type, season, episode, onOpenEpisodes }: VideoPla
                 className="absolute inset-0 block h-full w-full border-0"
             />
 
-            <div className="pointer-events-none absolute right-[max(0.5rem,env(safe-area-inset-right))] top-[max(0.5rem,env(safe-area-inset-top))] z-10 sm:right-3 sm:top-3">
+            {!chromeVisible && (
+                <>
+                    <button
+                        type="button"
+                        aria-label="Show player controls"
+                        className="absolute right-[max(0.5rem,env(safe-area-inset-right))] top-[max(0.5rem,env(safe-area-inset-top))] z-[12] min-h-14 min-w-14 bg-transparent sm:right-3 sm:top-3"
+                        onPointerDown={(e) => {
+                            e.stopPropagation()
+                            bumpChrome()
+                        }}
+                    />
+                    {type === 'tv' && onOpenEpisodes && (
+                        <button
+                            type="button"
+                            aria-label="Show player controls"
+                            className="absolute bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-[max(0.75rem,env(safe-area-inset-left))] z-[12] min-h-14 min-w-28 bg-transparent"
+                            onPointerDown={(e) => {
+                                e.stopPropagation()
+                                bumpChrome()
+                            }}
+                        />
+                    )}
+                </>
+            )}
+
+            <div
+                className={cn(
+                    'pointer-events-none absolute right-[max(0.5rem,env(safe-area-inset-right))] top-[max(0.5rem,env(safe-area-inset-top))] z-10 sm:right-3 sm:top-3',
+                    chromeTransition(chromeVisible)
+                )}
+            >
                 <button
                     type="button"
                     onClick={handleToggleFullscreen}
                     className="pointer-events-auto inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-border/80 bg-card/90 text-foreground shadow-lg backdrop-blur-md transition hover:border-primary/70 hover:text-primary active:scale-[0.98]"
                     aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                    tabIndex={chromeVisible ? 0 : -1}
                 >
                     {isFullscreen ? (
                         <Minimize2 className="h-5 w-5" aria-hidden />
@@ -95,13 +154,19 @@ const VideoPlayer = ({ tmdbId, type, season, episode, onOpenEpisodes }: VideoPla
             </div>
 
             {type === 'tv' && onOpenEpisodes && (
-                <div className="pointer-events-none absolute bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-[max(0.75rem,env(safe-area-inset-left))] z-10">
+                <div
+                    className={cn(
+                        'pointer-events-none absolute bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-[max(0.75rem,env(safe-area-inset-left))] z-10',
+                        chromeTransition(chromeVisible)
+                    )}
+                >
                     <button
                         type="button"
-                        onClick={onOpenEpisodes}
+                        onClick={handleOpenEpisodes}
                         className="pointer-events-auto inline-flex min-h-11 items-center gap-2 rounded-xl border border-border/80 bg-card/90 px-3.5 py-2.5 text-sm font-semibold text-foreground shadow-lg backdrop-blur-md transition hover:border-primary/70 hover:text-primary active:scale-[0.98]"
                         aria-haspopup="dialog"
                         aria-label="Open episode list"
+                        tabIndex={chromeVisible ? 0 : -1}
                     >
                         <ListVideo className="h-5 w-5 shrink-0" aria-hidden />
                         <span className="hidden sm:inline">Episodes</span>
